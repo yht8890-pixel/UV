@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UV 차단제의 화학 - 수행평가 감상평 제출</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS (Excel Download) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                    <i class="fa-solid fa-flask text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg md:text-xl tracking-tight">UV 차단제 화학 수행평가</h1>
+                    <p class="text-xs text-blue-100 font-light">원리 탐구 및 배운 점 제출 시스템</p>
+                </div>
+            </div>
+            
+            <!-- Admin Switch Button -->
+            <button id="adminBtn" class="flex items-center space-x-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                <i class="fa-solid fa-lock-open"></i>
+                <span>교사용 관리자 모드</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <!-- Custom Toast Notification Area (Replaces alert) -->
+        <div id="toast" class="hidden fixed bottom-5 right-5 z-50 transform translate-y-2 opacity-0 transition-all duration-300">
+            <div id="toastContent" class="flex items-center space-x-2 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl">
+                <span id="toast-icon" class="text-lg"></span>
+                <span id="toast-message" class="text-sm font-medium"></span>
+            </div>
+        </div>
+
+        <!-- Student Submit View -->
+        <div id="studentView" class="space-y-8">
+            
+            <!-- Chemistry Learning Panel (Split Physical vs Chemical) -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-1 rounded-full mb-2">사전 학습 가이드</span>
+                    <h2 class="text-xl md:text-2xl font-bold text-slate-900">자외선 차단제의 화학적 메커니즘</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Physical Blocking Card -->
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50/50 p-6 rounded-2xl border border-amber-100 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center space-x-3 mb-3">
+                                <span class="bg-amber-500 text-white p-2 rounded-lg text-sm"><i class="fa-solid fa-shield"></i></span>
+                                <h3 class="text-lg font-bold text-slate-900">물리적 차단제 (무기자차)</h3>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                                피부 표면에 보호막을 형성하여 자외선을 반사 및 산란시키는 원리입니다. 이산화티타늄($TiO_2$)이나 산화아연($ZnO$) 같은 금속 이온 산화물 성분이 빛을 거울처럼 튕겨내므로 바르는 즉시 자외선 차단 효과를 냅니다.
+                            </p>
+                        </div>
+                        <ul class="space-y-1.5 text-xs text-slate-500 border-t border-amber-200/40 pt-3 mt-3">
+                            <li><i class="fa-solid fa-check text-amber-600 mr-2"></i><strong>핵심 원리:</strong> 자외선의 거울 반사 및 산란 효과</li>
+                            <li><i class="fa-solid fa-check text-amber-600 mr-2"></i><strong>대표 성분:</strong> 이산화티타늄, 산화아연</li>
+                            <li><i class="fa-solid fa-check text-amber-600 mr-2"></i><strong>특성:</strong> 민감성 피부에 안전하나 약간의 백탁현상이 동반됨</li>
+                        </ul>
+                    </div>
+
+                    <!-- Chemical Blocking Card -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50/50 p-6 rounded-2xl border border-blue-100 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center space-x-3 mb-3">
+                                <span class="bg-blue-600 text-white p-2 rounded-lg text-sm"><i class="fa-solid fa-wave-square"></i></span>
+                                <h3 class="text-lg font-bold text-slate-900">화학적 차단제 (유기자차)</h3>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                                피부에 도포된 유기 화합물 분자가 자외선을 흡수하여 인체에 무해한 열에너지 형태로 변환시킨 뒤 자연스럽게 방출하는 원리입니다. 벤젠 고리가 포함된 복잡한 유기 분자들이 자외선 에너지를 화학 반응을 통해 흡수합니다.
+                            </p>
+                        </div>
+                        <ul class="space-y-1.5 text-xs text-slate-500 border-t border-blue-200/40 pt-3 mt-3">
+                            <li><i class="fa-solid fa-check text-blue-600 mr-2"></i><strong>핵심 원리:</strong> 분자의 자외선 에너지 흡수 및 열에너지 방출</li>
+                            <li><i class="fa-solid fa-check text-blue-600 mr-2"></i><strong>대표 성분:</strong> 아보벤존, 옥시벤존, 에칠헥실메톡시신나메이트</li>
+                            <li><i class="fa-solid fa-check text-blue-600 mr-2"></i><strong>특성:</strong> 백탁 현상이 없으나 외출 30분 전 미리 발라야 활성화됨</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Container -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-md border border-slate-100 max-w-3xl mx-auto">
+                <div class="text-center mb-8 border-b border-slate-100 pb-6">
+                    <i class="fa-solid fa-pen-fancy text-4xl text-indigo-600 mb-2"></i>
+                    <h2 class="text-2xl font-bold text-slate-900">감상평 및 탐구 성찰 제출</h2>
+                    <p class="text-sm text-slate-500 mt-1">수행평가 후 배운 점과 나만의 심화 연구 주제를 입력해 주세요.</p>
+                </div>
+
+                <form id="submissionForm" class="space-y-6" novalidate>
+                    <!-- Basic Info Rows -->
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- Student ID -->
+                        <div>
+                            <label for="studentId" class="block text-sm font-semibold text-slate-700 mb-2">학번 (5자리)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                    <i class="fa-solid fa-id-card"></i>
+                                </span>
+                                <input type="text" id="studentId" required maxlength="5" placeholder="예: 20101"
+                                    class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-800 placeholder-slate-400">
+                            </div>
+                        </div>
+
+                        <!-- Name -->
+                        <div>
+                            <label for="studentName" class="block text-sm font-semibold text-slate-700 mb-2">이름</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                    <i class="fa-solid fa-user"></i>
+                                </span>
+                                <input type="text" id="studentName" required placeholder="홍길동"
+                                    class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-800 placeholder-slate-400">
+                            </div>
+                        </div>
+
+                        <!-- Class Selection -->
+                        <div>
+                            <label for="classSection" class="block text-sm font-semibold text-slate-700 mb-2">분반</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                    <i class="fa-solid fa-users"></i>
+                                </span>
+                                <select id="classSection" required
+                                    class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-800 appearance-none cursor-pointer">
+                                    <option value="" disabled selected>분반 선택</option>
+                                    <option value="A">A 분반</option>
+                                    <option value="B">B 분반</option>
+                                    <option value="C">C 분반</option>
+                                    <option value="D">D 분반</option>
+                                    <option value="E">E 분반</option>
+                                    <option value="F">F 분반</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Long Text Area 1 -->
+                    <div>
+                        <label for="impressivePart" class="block text-sm font-semibold text-slate-700 mb-2">
+                            인상 깊었던 부분 서술
+                        </label>
+                        <p class="text-xs text-slate-400 mb-2">실험 과정이나 복습한 원리 중 특히 인상 깊었던 부분을 자유롭게 서술해 주세요.</p>
+                        <textarea id="impressivePart" required rows="4" placeholder="예: 무기자차 성분의 이산화티타늄 분자가 빛을 튕겨낼 때 일어나는 입자 크기와 백탁 현상의 상관관계 실험이 가장 인상에 남습니다..."
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-800 placeholder-slate-400 leading-relaxed"></textarea>
+                    </div>
+
+                    <!-- Long Text Area 2 -->
+                    <div>
+                        <label for="learnedReflection" class="block text-sm font-semibold text-slate-700 mb-2">
+                            수행평가를 통해 배운 점 및 감상 서술
+                        </label>
+                        <p class="text-xs text-slate-400 mb-2">이번 수행평가를 통해 변화된 생각이나 화학에 대해 새롭게 느낀 감상을 적어주세요.</p>
+                        <textarea id="learnedReflection" required rows="4" placeholder="예: 평소 성분표에 적힌 화학용어들이 어렵게만 느껴졌는데, 이번 분석을 통해 일상에서 실용적으로 사용되는 화학의 가치를 알 수 있는 좋은 계기였습니다..."
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-800 placeholder-slate-400 leading-relaxed"></textarea>
+                    </div>
+
+                    <!-- Long Text Area 3 -->
+                    <div>
+                        <label for="furtherTopics" class="block text-sm font-semibold text-slate-700 mb-2">
+                            더 조사하고 싶은 점이나 알아보고 싶은 주제
+                        </label>
+                        <p class="text-xs text-slate-400 mb-2">자외선 차단제의 화학적 반응이나 이와 관련된 실생활 화학 반응 중 후속으로 탐구하고 싶은 점을 제안해 주세요.</p>
+                        <textarea id="furtherTopics" required rows="4" placeholder="예: 자외선 차단제의 특정 유기화합물 성분이 해양 생태계(산호초)에 미치는 백화 현상 영향과 이를 대체할 수 있는 생분해성 친환경 차단제 성분에 대해 추가 조사를 해보고 싶습니다..."
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-800 placeholder-slate-400 leading-relaxed"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="submitBtn" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>수행평가 감상평 최종 제출하기</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard View (Password Protected) -->
+        <div id="adminView" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-1 rounded-full"><i class="fa-solid fa-shield-halved mr-1"></i>교사용 전용 시스템</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-2">수행평가 제출 지원자 목록</h2>
+                    <p class="text-sm text-slate-500 mt-0.5">실시간으로 입력된 학생들의 수행평가 성찰 기록을 종합적으로 모니터링합니다.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 items-center">
+                    <button id="exportExcelBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-lg text-sm flex items-center space-x-2 shadow-sm transition-colors">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>엑셀 파일 다운로드</span>
+                    </button>
+                    <button id="exitAdminBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-4 py-2.5 rounded-lg text-sm transition-colors">
+                        학생 화면으로 복귀
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Overview Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left: Overall Stats Card -->
+                <div class="grid grid-cols-2 gap-4 lg:col-span-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                        <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-users text-lg"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-400">총 제출 완료</p>
+                            <p id="totalCount" class="text-xl font-bold text-slate-800">0명</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><i class="fa-solid fa-clock text-lg"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-400">오늘 제출</p>
+                            <p id="todayCount" class="text-xl font-bold text-slate-800">0명</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Individual Class Counts (A ~ F) -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 lg:col-span-8">
+                    <p class="text-xs font-semibold text-slate-400 mb-3"><i class="fa-solid fa-school mr-1"></i>분반별 제출 인원 현황</p>
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                        <div class="bg-rose-50/60 border border-rose-100 p-2 rounded-lg text-center">
+                            <span class="text-xs font-bold text-rose-800 block">A 분반</span>
+                            <span id="countA" class="text-base font-black text-rose-900">0명</span>
+                        </div>
+                        <div class="bg-amber-50/60 border border-amber-100 p-2 rounded-lg text-center">
+                            <span class="text-xs font-bold text-amber-800 block">B 분반</span>
+                            <span id="countB" class="text-base font-black text-amber-900">0명</span>
+                        </div>
+                        <div class="bg-emerald-50/60 border border-emerald-100 p-2 rounded-lg text-center">
+                            <span class="text-xs font-bold text-emerald-800 block">C 분반</span>
+                            <span id="countC" class="text-base font-black text-emerald-900">0명</span>
+                        </div>
+                        <div class="bg-blue-50/60 border border-blue-100 p-2 rounded-lg text-center">
+                            <span class="text-xs font-bold text-blue-800 block">D 분반</span>
+                            <span id="countD" class="text-base font-black text-blue-900">0명</span>
+                        </div>
+                        <div class="bg-indigo-50/60 border border-indigo-100 p-2 rounded-lg text-center">
+                            <span class="text-xs font-bold text-indigo-800 block">E 분반</span>
+                            <span id="countE" class="text-base font-black text-indigo-900">0명</span>
+                        </div>
+                        <div class="bg-purple-50/60 border border-purple-100 p-2 rounded-lg text-center">
+                            <span class="text-xs font-bold text-purple-800 block">F 분반</span>
+                            <span id="countF" class="text-base font-black text-purple-900">0명</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center">
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <span class="text-sm font-semibold text-slate-600 shrink-0"><i class="fa-solid fa-filter mr-1"></i>분반 필터:</span>
+                    <select id="filterClass" class="w-full sm:w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="ALL">전체 분반</option>
+                        <option value="A">A 분반</option>
+                        <option value="B">B 분반</option>
+                        <option value="C">C 분반</option>
+                        <option value="D">D 분반</option>
+                        <option value="E">E 분반</option>
+                        <option value="F">F 분반</option>
+                    </select>
+                </div>
+                <div class="relative w-full sm:w-64">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input type="text" id="adminSearch" placeholder="학번 또는 이름으로 검색"
+                        class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <!-- Scrollable Submissions Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 text-xs text-slate-700 uppercase font-semibold">
+                            <tr>
+                                <th scope="col" class="px-6 py-4">학번</th>
+                                <th scope="col" class="px-6 py-4">이름</th>
+                                <th scope="col" class="px-6 py-4 text-center">분반</th>
+                                <th scope="col" class="px-6 py-4">인상 깊었던 부분</th>
+                                <th scope="col" class="px-6 py-4">배운 점 및 감상</th>
+                                <th scope="col" class="px-6 py-4">더 탐구할 주제</th>
+                                <th scope="col" class="px-6 py-4 text-right">제출 시간</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissionsTableBody" class="divide-y divide-slate-100">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden p-12 text-center text-slate-400">
+                    <i class="fa-solid fa-inbox text-4xl mb-3 block text-slate-300"></i>
+                    <p class="font-medium text-slate-500">조건에 일치하는 제출 기록이 없습니다.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Admin Password Verification Dialog (Custom Modal, no native alert) -->
+    <div id="passwordModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 animate-scale-up">
+            <div class="text-center mb-5">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+                    <i class="fa-solid fa-key text-lg"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 leading-6">관리자 모드 접속</h3>
+                <p class="text-xs text-slate-500 mt-1">인증을 위해 교사용 비밀번호를 입력하세요.</p>
+            </div>
+            
+            <form id="passwordForm" class="space-y-4">
+                <div>
+                    <input type="password" id="adminPasswordInput" required placeholder="비밀번호 입력"
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-center font-bold tracking-widest text-slate-800 placeholder-slate-400">
+                </div>
+                <div id="passErrorMsg" class="hidden text-rose-500 text-xs text-center font-semibold">
+                    비밀번호가 일치하지 않습니다. (sabu2026)
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button type="button" id="closePassModalBtn" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition-colors">
+                        취소
+                    </button>
+                    <button type="submit" class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition-colors shadow-sm">
+                        인증 완료
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Thank you Success State Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl text-center">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-emerald-100 text-emerald-600 mb-4">
+                <i class="fa-solid fa-circle-check text-2xl animate-bounce"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">수행평가 제출이 완료되었습니다!</h3>
+            <p class="text-sm text-slate-500 mt-2">감상평 및 심화 탐구 주제가 실시간 데이터베이스에 정상적으로 제출되었습니다. 수고하셨습니다.</p>
+            <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <p id="studentSuccessTimestamp" class="text-xs font-semibold text-slate-500"></p>
+            </div>
+            <div class="mt-6">
+                <button id="closeSuccessModalBtn" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold rounded-xl shadow-md">
+                    확인
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+        <div class="max-w-6xl mx-auto px-4 space-y-1">
+            <p>© 2026 고등학교 화학 교육실. 이 페이지는 화학 성분 탐구 수행평가 피드백을 수집하기 위해 사용됩니다.</p>
+            <p class="text-slate-300">내부용으로만 사용되며, 허가되지 않은 상업적 유포를 금지합니다.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global context variables (provided by system environment/safely fallbacked)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'chem-sunscreen-assessment-v2';
+        
+        // 하드코딩된 실제 파이어베이스 설정 정보 반영
+        const firebaseConfig = {
+const firebaseConfig = {
+  apiKey: "AIzaSyBjPnfjc2iLtQYTurUtpUn8nZ4WGg2tUfw",
+  authDomain: "uvassessment.firebaseapp.com",
+  projectId: "uvassessment",
+  storageBucket: "uvassessment.firebasestorage.app",
+  messagingSenderId: "367030438185",
+  appId: "1:367030438185:web:b95085f625f7d424420f38"
+};
+
+
+        // Firebase Setup
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let allSubmissions = []; // Holds current snapshot locally for filtering/sorting
+
+        // Grab elements
+        const studentView = document.getElementById('studentView');
+        const adminView = document.getElementById('adminView');
+        const adminBtn = document.getElementById('adminBtn');
+        const exitAdminBtn = document.getElementById('exitAdminBtn');
+        const passwordModal = document.getElementById('passwordModal');
+        const passwordForm = document.getElementById('passwordForm');
+        const adminPasswordInput = document.getElementById('adminPasswordInput');
+        const closePassModalBtn = document.getElementById('closePassModalBtn');
+        const passErrorMsg = document.getElementById('passErrorMsg');
+        const submissionForm = document.getElementById('submissionForm');
+        const successModal = document.getElementById('successModal');
+        const closeSuccessModalBtn = document.getElementById('closeSuccessModalBtn');
+        const toast = document.getElementById('toast');
+        const toastContent = document.getElementById('toastContent');
+        const toastIcon = document.getElementById('toast-icon');
+        const toastMessage = document.getElementById('toast-message');
+        const studentSuccessTimestamp = document.getElementById('studentSuccessTimestamp');
+
+        // Admin board elements
+        const submissionsTableBody = document.getElementById('submissionsTableBody');
+        const emptyState = document.getElementById('emptyState');
+        const totalCount = document.getElementById('totalCount');
+        const todayCount = document.getElementById('todayCount');
+        const filterClass = document.getElementById('filterClass');
+        const adminSearch = document.getElementById('adminSearch');
+        const exportExcelBtn = document.getElementById('exportExcelBtn');
+
+        // Individual class elements
+        const countA = document.getElementById('countA');
+        const countB = document.getElementById('countB');
+        const countC = document.getElementById('countC');
+        const countD = document.getElementById('countD');
+        const countE = document.getElementById('countE');
+        const countF = document.getElementById('countF');
+
+        // Input Form fields for Focus Utility
+        const inputId = document.getElementById('studentId');
+        const inputName = document.getElementById('studentName');
+        const selectClass = document.getElementById('classSection');
+
+        // --- RULE 3 & FALLBACK: Auth Before Queries & Initial Auth Flow ---
+        const initAuth = async () => {
+            try {
+                // custom-token-mismatch 에러를 예방하기 위해 try-catch 블록 내부에서 순차적으로 안전한 로그인 수단을 취합니다.
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } catch (tokenError) {
+                        // 토큰이 불일치하면 시스템 익명 로그인(Anonymous Sign-in)으로 복구 처리
+                        console.warn("Custom token failed, switching to anonymous sign-in:", tokenError);
+                        await signInAnonymously(auth);
+                    }
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Firebase Authentication Failed: ", error);
+                
+                // admin-restricted-operation (익명 로그인 비활성화) 에러인 경우 사용자 친화적 설명 제공
+                if (error.code === 'auth/admin-restricted-operation') {
+                    showToast("⚙️ 파이어베이스 설정 필요: 파이어베이스 콘솔 -> Authentication -> Sign-in method -> 익명(Anonymous)을 활성화해주세요.", "error");
+                } else {
+                    showToast("⚠️ 데이터베이스 세션 연결에 실패했습니다. 파이어베이스 설정을 확인해 주세요.", "error");
+                }
+            }
+        };
+
+        // Track authentication globally
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+            }
+        });
+
+        // Start initialization immediately
+        initAuth();
+
+        // Elegant Toast Mechanism (to replace browser alerts completely)
+        function showToast(message, type = "success") {
+            toastMessage.textContent = message;
+            
+            // Clear prior design themes
+            toastContent.className = "flex items-center space-x-2 px-5 py-3.5 rounded-xl shadow-2xl text-white";
+            
+            if (type === "success") {
+                toastContent.classList.add("bg-slate-900");
+                toastIcon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>`;
+            } else if (type === "error") {
+                toastContent.classList.add("bg-rose-900", "border", "border-rose-700");
+                toastIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-300 text-lg animate-pulse"></i>`;
+            } else {
+                toastContent.classList.add("bg-slate-900");
+                toastIcon.innerHTML = `<i class="fa-solid fa-circle-info text-blue-400 text-lg"></i>`;
+            }
+
+            toast.classList.remove('hidden');
+            void toast.offsetWidth; // Force Reflow
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+
+            // Active delay block - 설정을 돕기 위해 오류 메시지 노출 시간 증대
+            const displayTime = type === "error" ? 10000 : 3500;
+            
+            if (window.toastTimeout) clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(2px)';
+                setTimeout(() => toast.classList.add('hidden'), 300);
+            }, displayTime);
+        }
+
+        // Student Form Submission Trigger with Robust Input Validation
+        submissionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!currentUser) {
+                showToast("인증 세션이 연결되지 않았습니다. 파이어베이스 콘솔에서 익명 로그인을 활성화했는지 확인해 주세요.", "error");
+                return;
+            }
+
+            // Gather inputs
+            const id = inputId.value.trim();
+            const name = inputName.value.trim();
+            const classVal = selectClass.value;
+            const impressive = document.getElementById('impressivePart').value.trim();
+            const reflection = document.getElementById('learnedReflection').value.trim();
+            const further = document.getElementById('furtherTopics').value.trim();
+
+            // 1. 학번 유효성 정밀 검증
+            if (!id) {
+                showToast("학번을 입력해 주세요.", "error");
+                inputId.focus();
+                return;
+            }
+            if (id.length !== 5 || isNaN(id)) {
+                showToast("학번은 반드시 5자리 숫자로 입력해야 합니다. (예: 20101)", "error");
+                inputId.focus();
+                return;
+            }
+
+            // 2. 이름 유효성 정밀 검증
+            if (!name) {
+                showToast("이름을 입력해 주세요.", "error");
+                inputName.focus();
+                return;
+            }
+            if (name.length < 2) {
+                showToast("이름을 정확하게 한글 또는 영문으로 입력해 주세요.", "error");
+                inputName.focus();
+                return;
+            }
+
+            // 3. 분반 선택 여부 정밀 검증
+            if (!classVal || classVal === "") {
+                showToast("소속 분반(A ~ F)을 선택해 주세요.", "error");
+                selectClass.focus();
+                return;
+            }
+
+            // 4. 서술형 항목 누락 검증
+            if (!impressive) {
+                showToast("인상 깊었던 부분 서술 칸을 채워주세요.", "error");
+                document.getElementById('impressivePart').focus();
+                return;
+            }
+            if (!reflection) {
+                showToast("수행평가를 통해 배운 점 및 감상 서술 칸을 채워주세요.", "error");
+                document.getElementById('learnedReflection').focus();
+                return;
+            }
+            if (!further) {
+                showToast("더 조사하고 싶은 점이나 알아보고 싶은 주제 칸을 채워주세요.", "error");
+                document.getElementById('furtherTopics').focus();
+                return;
+            }
+
+            // Button Loading State
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-70');
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>성찰 일지 제출 중...</span>`;
+
+            try {
+                // RULE 1: STRICT PATH FOR COLLABORATIVE / TEACHER ACCESSIBLE DATA
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'submissions'), {
+                    studentId: id,
+                    studentName: name,
+                    classSection: classVal,
+                    impressivePart: impressive,
+                    learnedReflection: reflection,
+                    furtherTopics: further,
+                    submittedAt: serverTimestamp(),
+                    userId: currentUser.uid
+                });
+
+                // Set Submission Timestamp Display for Student Feedback
+                const now = new Date();
+                const timeString = now.toLocaleDateString('ko-KR') + " " + now.toLocaleTimeString('ko-KR', { hour12: false });
+                studentSuccessTimestamp.textContent = `제출 완료 일시: ${timeString}`;
+
+                submissionForm.reset();
+                successModal.classList.remove('hidden');
+            } catch (err) {
+                console.error("DB Write Error: ", err);
+                showToast("데이터베이스 저장에 실패했습니다. 규칙(Rules) 설정이나 네트워크 상태를 확인해 주세요.", "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-70');
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>수행평가 감상평 최종 제출하기</span>`;
+            }
+        });
+
+        // Close Success Modal
+        closeSuccessModalBtn.addEventListener('click', () => {
+            successModal.classList.add('hidden');
+        });
+
+        // Manage Password Trigger
+        adminBtn.addEventListener('click', () => {
+            adminPasswordInput.value = "";
+            passErrorMsg.classList.add('hidden');
+            passwordModal.classList.remove('hidden');
+            adminPasswordInput.focus();
+        });
+
+        closePassModalBtn.addEventListener('click', () => {
+            passwordModal.classList.add('hidden');
+        });
+
+        // Password Validation Logic
+        passwordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (adminPasswordInput.value === "sabu2026") {
+                passwordModal.classList.add('hidden');
+                enableTeacherMode();
+            } else {
+                passErrorMsg.classList.remove('hidden');
+                adminPasswordInput.focus();
+                adminPasswordInput.classList.add('ring-2', 'ring-rose-500');
+                setTimeout(() => adminPasswordInput.classList.remove('ring-2', 'ring-rose-500'), 1000);
+            }
+        });
+
+        function enableTeacherMode() {
+            studentView.classList.add('hidden');
+            adminView.classList.remove('hidden');
+            adminBtn.classList.add('hidden');
+            showToast("🔒 교사용 통합 모드 활성화 완료");
+            
+            // Query & Bind Firestore Events
+            getRealtimeSubmissions();
+        }
+
+        exitAdminBtn.addEventListener('click', () => {
+            adminView.classList.add('hidden');
+            studentView.classList.remove('hidden');
+            adminBtn.classList.remove('hidden');
+        });
+
+        // Realtime sync database
+        let unsub = null;
+        function getRealtimeSubmissions() {
+            if (!currentUser) return;
+            if (unsub) unsub();
+
+            // RULE 1: Strict Paths
+            const q = collection(db, 'artifacts', appId, 'public', 'data', 'submissions');
+
+            // RULE 2: No complex queries inside onSnapshot -- we do local JS sorting and processing
+            unsub = onSnapshot(q, (snapshot) => {
+                const list = [];
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    list.push({
+                        id: doc.id,
+                        ...data,
+                        dateObj: data.submittedAt ? data.submittedAt.toDate() : new Date()
+                    });
+                });
+
+                // Sort descending locally by time
+                allSubmissions = list.sort((a, b) => b.dateObj - a.dateObj);
+                renderDashboard();
+            }, (error) => {
+                console.error("Subscription Fetch Error: ", error);
+                showToast("실시간 데이터를 연동하는 중에 오류가 생겼습니다.", "error");
+            });
+        }
+
+        // Dashboard Rendering Logic
+        function renderDashboard() {
+            const chosenClass = filterClass.value;
+            const searchVal = adminSearch.value.trim().toLowerCase();
+
+            const filteredList = allSubmissions.filter(item => {
+                const matchesClass = chosenClass === 'ALL' || item.classSection === chosenClass;
+                const matchesSearch = !searchVal || 
+                    item.studentId.includes(searchVal) || 
+                    item.studentName.toLowerCase().includes(searchVal);
+                return matchesClass && matchesSearch;
+            });
+
+            // Calculate Metrics
+            const total = allSubmissions.length;
+            
+            // Calculate individual class counters
+            const countSectionA = allSubmissions.filter(item => item.classSection === 'A').length;
+            const countSectionB = allSubmissions.filter(item => item.classSection === 'B').length;
+            const countSectionC = allSubmissions.filter(item => item.classSection === 'C').length;
+            const countSectionD = allSubmissions.filter(item => item.classSection === 'D').length;
+            const countSectionE = allSubmissions.filter(item => item.classSection === 'E').length;
+            const countSectionF = allSubmissions.filter(item => item.classSection === 'F').length;
+
+            // Calculate Today's Submission
+            const startOfToday = new Date();
+            startOfToday.setHours(0, 0, 0, 0);
+            const todayCountVal = allSubmissions.filter(item => item.dateObj >= startOfToday).length;
+
+            // Update stats layout
+            totalCount.textContent = `${total}명`;
+            todayCount.textContent = `${todayCountVal}명`;
+            
+            // Update individual class boxes
+            countA.textContent = `${countSectionA}명`;
+            countB.textContent = `${countSectionB}명`;
+            countC.textContent = `${countSectionC}명`;
+            countD.textContent = `${countSectionD}명`;
+            countE.textContent = `${countSectionE}명`;
+            countF.textContent = `${countSectionF}명`;
+
+            submissionsTableBody.innerHTML = '';
+
+            if (filteredList.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filteredList.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors border-b border-slate-100';
+
+                // Display detailed full timestamp (YYYY. MM. DD. HH:mm:ss)
+                const formattedTime = item.dateObj.toLocaleDateString('ko-KR') + ' ' + item.dateObj.toLocaleTimeString('ko-KR', { hour12: false });
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-bold text-slate-900 whitespace-nowrap">${escapeHtml(item.studentId)}</td>
+                    <td class="px-6 py-4 font-semibold text-slate-800 whitespace-nowrap">${escapeHtml(item.studentName)}</td>
+                    <td class="px-6 py-4 text-center whitespace-nowrap">
+                        <span class="inline-block px-2.5 py-1 text-xs font-bold rounded-full ${getClassColor(item.classSection)}">
+                            ${escapeHtml(item.classSection)} 분반
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 max-w-xs break-words text-xs text-slate-600 leading-relaxed">${escapeHtml(item.impressivePart)}</td>
+                    <td class="px-6 py-4 max-w-sm break-words text-xs text-slate-600 leading-relaxed">${escapeHtml(item.learnedReflection)}</td>
+                    <td class="px-6 py-4 max-w-xs break-words text-xs text-slate-600 leading-relaxed">${escapeHtml(item.furtherTopics || '')}</td>
+                    <td class="px-6 py-4 text-right text-xs font-medium text-indigo-600 whitespace-nowrap">${formattedTime}</td>
+                `;
+
+                submissionsTableBody.appendChild(tr);
+            });
+        }
+
+        // HTML escaping utilities
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Style mapping helper for class badges
+        function getClassColor(cls) {
+            switch(cls) {
+                case 'A': return 'bg-rose-100 text-rose-800';
+                case 'B': return 'bg-amber-100 text-amber-800';
+                case 'C': return 'bg-emerald-100 text-emerald-800';
+                case 'D': return 'bg-blue-100 text-blue-800';
+                case 'E': return 'bg-indigo-100 text-indigo-800';
+                case 'F': return 'bg-purple-100 text-purple-800';
+                default: return 'bg-slate-100 text-slate-800';
+            }
+        }
+
+        // Event hooks
+        filterClass.addEventListener('change', renderDashboard);
+        adminSearch.addEventListener('input', renderDashboard);
+
+        // SheetJS Excel Generator
+        exportExcelBtn.addEventListener('click', () => {
+            if (allSubmissions.length === 0) {
+                showToast("다운로드할 제출 이력이 존재하지 않습니다.", "error");
+                return;
+            }
+
+            try {
+                const sheetData = allSubmissions.map((item, idx) => {
+                    const submissionTime = item.dateObj ? (item.dateObj.toLocaleDateString('ko-KR') + ' ' + item.dateObj.toLocaleTimeString('ko-KR', { hour12: false })) : '';
+                    return {
+                        "순번": idx + 1,
+                        "학번": item.studentId,
+                        "이름": item.studentName,
+                        "분반": `${item.classSection} 분반`,
+                        "인상 깊었던 부분": item.impressivePart,
+                        "수행평가를 통해 배운 점 및 감상": item.learnedReflection,
+                        "더 조사하고 싶은 점 이나 알아보고 싶은 주제": item.furtherTopics || '',
+                        "제출 시간": submissionTime
+                    };
+                });
+
+                const ws = XLSX.utils.json_to_sheet(sheetData);
+                const wb = XLSX.utils.book_new();
+
+                // Beautify Excel Column Widths
+                const colWidths = [
+                    { wch: 6 },  // 순번
+                    { wch: 10 }, // 학번
+                    { wch: 12 }, // 이름
+                    { wch: 10 }, // 분반
+                    { wch: 45 }, // 인상 깊었던 부분
+                    { wch: 45 }, // 배운 점 및 감상
+                    { wch: 45 }, // 더 조사하고 싶은 점
+                    { wch: 25 }  // 제출 시간
+                ];
+                ws['!cols'] = colWidths;
+
+                XLSX.utils.book_append_sheet(wb, ws, "수행평가 결과물");
+
+                const dateString = new Date().toISOString().split('T')[0];
+                XLSX.writeFile(wb, `화학_수행평가_감상평_목록_${dateString}.xlsx`);
+                
+                showToast("📁 엑셀 파일 다운로드가 정상 완료되었습니다.");
+            } catch (err) {
+                console.error("Excel generation err: ", err);
+                showToast("엑셀 내보내기 중 문제가 생겼습니다.", "error");
+            }
+        });
+
+    </script>
+</body>
+</html>
