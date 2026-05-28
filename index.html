@@ -31,7 +31,7 @@
                 <textarea id="s1" placeholder="인상 깊었던 부분" required class="w-full border p-2 rounded"></textarea>
                 <textarea id="s2" placeholder="배운 점 및 감상" required class="w-full border p-2 rounded"></textarea>
                 <textarea id="s3" placeholder="더 조사하고 싶은 점" required class="w-full border p-2 rounded"></textarea>
-                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">제출하기</button>
+                <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">제출하기</button>
             </form>
         </div>
 
@@ -93,18 +93,26 @@
         const db = getFirestore(initializeApp(firebaseConfig));
         signInAnonymously(getAuth());
 
-        const form = document.getElementById('submissionForm');
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            await addDoc(collection(db, "submissions"), {
-                sid: document.getElementById('sid').value,
-                sname: document.getElementById('sname').value,
-                sclass: document.getElementById('sclass').value,
-                s1: document.getElementById('s1').value, s2: document.getElementById('s2').value, s3: document.getElementById('s3').value,
-                time: serverTimestamp()
-            });
-            alert('제출 완료!'); form.reset();
-        };
+        // 폼 제출 이벤트 리스너를 명시적으로 처리
+        document.getElementById('submissionForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            try {
+                await addDoc(collection(db, "submissions"), {
+                    sid: document.getElementById('sid').value,
+                    sname: document.getElementById('sname').value,
+                    sclass: document.getElementById('sclass').value,
+                    s1: document.getElementById('s1').value, 
+                    s2: document.getElementById('s2').value, 
+                    s3: document.getElementById('s3').value,
+                    time: serverTimestamp()
+                });
+                alert('제출 완료!'); 
+                document.getElementById('submissionForm').reset();
+            } catch (err) {
+                console.error(err);
+                alert('제출 실패. 다시 시도해주세요.');
+            }
+        });
 
         document.getElementById('adminModeBtn').onclick = () => {
             document.getElementById('pwInput').value = '';
@@ -116,7 +124,6 @@
         };
 
         document.getElementById('exitAdminBtn').onclick = () => {
-            document.getElementById('pwInput').value = ''; 
             document.getElementById('studentFormSection').classList.remove('hidden');
             document.getElementById('adminSection').classList.add('hidden');
         };
